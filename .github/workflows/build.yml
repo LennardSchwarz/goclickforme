@@ -1,0 +1,34 @@
+name: Go Build
+
+on:
+  push:
+    branches: [ main ]
+  release:
+    types: [created]
+
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [1.17.x]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: Compile Go code
+      run: |
+        GOOS=${{ matrix.os }} GOARCH=amd64 go build -o goclickforme
+
+    - name: Upload executable as an artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: goclickforme-${{ matrix.os }}
+        path: ./goclickforme*

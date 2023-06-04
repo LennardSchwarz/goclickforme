@@ -25,7 +25,19 @@ jobs:
 
     - name: Compile Go code
       run: |
-        GOOS=${{ matrix.os }} GOARCH=amd64 go build -o goclickforme
+        goos=""
+        case "${{ matrix.os }}" in
+          ubuntu-latest)
+            goos=linux
+            ;;
+          macos-latest)
+            goos=darwin
+            ;;
+          windows-latest)
+            goos=windows
+            ;;
+        esac
+        GOOS=$goos GOARCH=amd64 go build -o goclickforme
 
     - name: Upload executable as an artifact
       uses: actions/upload-artifact@v2
